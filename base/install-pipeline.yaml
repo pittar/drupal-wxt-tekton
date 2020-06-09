@@ -1,0 +1,34 @@
+kind: Pipeline
+apiVersion: tekton.dev/v1beta1
+metadata:
+  name: drupal-install-build
+spec:
+  tasks:
+    - name: start-s2i-build
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      params:
+        - name: SCRIPT
+          value: |
+              oc start-build site-wxt -n wxtdemo --follow
+    - name: deploy-dev
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      runAfter:
+        - start-s2i-build 
+      params:
+        - name: SCRIPT
+          value: |
+              oc rollout latest dc/site-wxt -n wxtdemo
+              oc rollout status dc/site-wxt -n wxtdemo
+    - name: install-drupal
+      taskRef:
+        kind: Task
+        name: oc-drupal-install
+      runAfter:
+        - deploy-dev
+      params:
+        - name: PROJECT
+          value: wxtdemo

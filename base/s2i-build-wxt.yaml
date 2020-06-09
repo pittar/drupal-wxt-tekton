@@ -1,0 +1,42 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    app.openshift.io/vcs-ref: ised
+    app.openshift.io/vcs-uri: https://github.com/ised-isde-canada/site-wxt.git
+  labels:
+    app: site-wxt
+    app.kubernetes.io/component: site-wxt
+    app.kubernetes.io/instance: site-wxt
+    app.kubernetes.io/name: php
+    app.kubernetes.io/part-of: site-wxt-git
+    app.openshift.io/runtime: php
+    app.openshift.io/runtime-version: "7.2"
+  name: site-wxt
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: {}
+  output:
+    to:
+      kind: ImageStreamTag
+      name: site-wxt:latest
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    contextDir: /
+    git:
+      ref: ised
+      uri: https://github.com/pittar/site-wxt.git
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: php:7.2
+        namespace: openshift
+    type: Source
+  successfulBuildsHistoryLimit: 5
+  triggers: []
+status:
+  lastVersion: 0

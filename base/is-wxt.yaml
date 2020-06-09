@@ -1,0 +1,15 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: site-wxt
+    app.kubernetes.io/component: site-wxt
+    app.kubernetes.io/instance: site-wxt
+    app.kubernetes.io/name: php
+    app.kubernetes.io/part-of: site-wxt-app
+    app.openshift.io/runtime: php
+    app.openshift.io/runtime-version: "7.2"
+  name: site-wxt
+spec:
+  lookupPolicy:
+    local: false

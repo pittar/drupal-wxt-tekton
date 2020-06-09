@@ -1,0 +1,76 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  annotations:
+    app.openshift.io/vcs-ref: ised
+    app.openshift.io/vcs-uri: https://github.com/ised-isde-canada/site-wxt.git
+  generation: 1
+  labels:
+    app: site-wxt
+    app.kubernetes.io/component: site-wxt
+    app.kubernetes.io/instance: site-wxt
+    app.kubernetes.io/name: php
+    app.kubernetes.io/part-of: site-wxt-app
+    app.openshift.io/runtime: php
+    app.openshift.io/runtime-version: "7.2"
+  name: site-wxt
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: site-wxt
+    deploymentconfig: site-wxt
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: site-wxt
+        deploymentconfig: site-wxt
+    spec:
+      containers:
+      - image: site-wxt
+        imagePullPolicy: Always
+        name: site-wxt
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/app-root/src/html/sites
+          name: sites
+        env:
+        - name: PHP_MEMORY_LIMIT
+          value: 512M
+        resources:
+          limits:
+            memory: 512Mi
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: sites
+        persistentVolumeClaim:
+          claimName: sites-pvc
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: false
+      containerNames:
+      - site-wxt
+      from:
+        kind: ImageStreamTag
+        name: site-wxt:latest
+    type: ImageChange
+  - type: ConfigChange
