@@ -15,6 +15,6 @@ spec:
       image: quay.io/openshift/origin-cli:latest
       script: |
         #!/usr/bin/env bash
-        POD=$(oc get pods -l app=site-wxt -o jsonpath='{range .items[*].metadata}{.name}' -n sitedemo)
+        POD=$(oc get pods -l app=site-wxt -o jsonpath='{range .items[*].metadata}{.name}' -n wxtdemo)
         echo "Drupal pod name: $POD"
         oc exec $POD -- /opt/app-root/src/vendor/drush/drush/drush si -y --site-name="Red Hat Demos" --db-url=pgsql://$database-user:$database-password@drupaldb:5432/$database-name --account-name=admin --account-pass=admin
